@@ -63,6 +63,7 @@ This makes all functions in the package available immediately.
 ```
 eg:
 R/biology.R -> all things biology
+R/antarctic_theme.R -> stores the ggplot theme we should use
 
 ```
 
@@ -196,12 +197,13 @@ devtools::check()
 
   ## 🧪 Key rules
 
-* All functions go in `R/functions.R`
+* All functions go in `R/`
 * Always run `roxygen2::roxygenize()` after changes
 * Always run `devtools::check()` before merging
 * Never edit `NAMESPACE` manually
 * Update `DESCRIPTION` manually for dependencies
 * Keep functions simple and modular
+* Use the ggplot `antarctic_theme`
 
 ---
 
