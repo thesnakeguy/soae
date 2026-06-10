@@ -11,7 +11,7 @@
 Open RStudio and run:
 
 ```r
-usethis::create_from_github("YOUR_GITHUB_USERNAME/soae")
+usethis::create_from_github("thesnakeguy/soae")
 ```
 
 Or clone the repository manually and open the `.Rproj` file.
@@ -173,7 +173,7 @@ Then open a **Pull Request** on GitHub.
 
 ## 📬 Questions
 
-If you're unsure about anything, open an [issue](../../issues) or reach out to the maintainer.
+If you're unsure about anything, open an [issue](../../issues)
 
 ---
 

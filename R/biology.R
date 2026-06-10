@@ -62,7 +62,8 @@ download_gfw_year <- function(year,
 }
 
 
-#' Fetch and cache annual gridded fishing-effort data (heatmap + gear data)
+
+#' Fetch and cache multi-annual gridded fishing-effort data
 #'
 #' Queries the GFW API for annual, gear-type-grouped fishing effort over the
 #' CCAMLR convention area for each year in \code{years}. Results are saved to
@@ -78,7 +79,7 @@ download_gfw_year <- function(year,
 #'   containing the raw columns returned by the GFW API plus an integer
 #'   \code{year} column.
 #'
-#' @seealso [download_gfw_year()], [fetch_trend_data()]
+#' @seealso [download_gfw_year()], [download_trend_data()]
 #'
 #' @importFrom purrr map map2 compact
 #' @importFrom dplyr bind_rows mutate
@@ -87,14 +88,12 @@ download_gfw_year <- function(year,
 #'
 #' @examples
 #' \dontrun{
-#' heatmap_df <- fetch_heatmap_data(2016:2025)
+#' gfw_df <- download_gfw_data(years = c(2016:2025))
 #' }
 #'
 #' @export
-fetch_heatmap_data <- function(years,
-                               ccamlr_id = "CCAMLR",
-                               key = gfwr::gfw_auth(),
-                               cache_file = "cache_heatmap_data.rds") {
+download_gfw_data <- function(years,
+                              cache_file = "cache_gfw_data.rds") {
 
   # ── Load & validate cache ──────────────────────────────────────────────────
   if (file.exists(cache_file)) {
@@ -109,32 +108,32 @@ fetch_heatmap_data <- function(years,
   }
 
   # ── Fetch from API ─────────────────────────────────────────────────────────
-  message("Fetching heatmap data from GFW API (one call per year)...")
+  message("Fetching gfw data from GFW API (one call per year)...")
 
   raw_list <- purrr::map(
     years,
     ~ download_gfw_year(as.vector(.x),
-                        region_id = ccamlr_id,
-                        key       = key,
+                        region_id = "CCAMLR",
+                        key       = gfwr::gfw_auth(),
                         group     = "GEARTYPE",
                         res       = "YEARLY")
   )
 
-  heatmap_df <- purrr::map2(raw_list, years, function(df, yr) {
+  gfw_df <- purrr::map2(raw_list, years, function(df, yr) {
     if (is.null(df)) return(NULL)
     dplyr::mutate(df, year = as.integer(yr))
   }) |>
     purrr::compact() |>
     dplyr::bind_rows()
 
-  if (nrow(heatmap_df) == 0) {
-    stop("All heatmap year fetches failed. Check your API token and connection.")
+  if (nrow(gfw_df) == 0) {
+    stop("All gfw year fetches failed. Check your API token and connection.")
   }
 
-  saveRDS(heatmap_df, cache_file)
-  message(glue::glue("Heatmap data cached: {nrow(heatmap_df)} rows -> {cache_file}"))
+  saveRDS(gfw_df, cache_file)
+  message(glue::glue("gfw data cached: {nrow(gfw_df)} rows -> {cache_file}"))
 
-  heatmap_df
+  gfw_df
 }
 
 
@@ -145,10 +144,10 @@ fetch_heatmap_data <- function(years,
 #' Results are saved to an RDS cache file. The cache is validated on load and
 #' automatically replaced if empty or corrupt.
 #'
-#' @param trend_start  Integer. First year of the trend period (inclusive).
-#' @param current_year Integer. Last year of the trend period (inclusive).
+#' @param year_start  Integer. First year of the trend period (inclusive).
+#' @param year_end Integer. Last year of the trend period (inclusive).
 #' @param cache_file   Character. Path to the RDS cache file. Defaults to
-#'   \code{"cache_trend_data.rds"}.
+#'   \code{"cache_month_data.rds"}.
 #'
 #' @return A data frame with one row per year × flag × month × grid cell,
 #'   containing raw GFW API columns plus an integer \code{year} column.
@@ -162,57 +161,56 @@ fetch_heatmap_data <- function(years,
 #'
 #' @examples
 #' \dontrun{
-#' trend_df  <- fetch_trend_data(2016, 2025, ccamlr_id, key)
+#' gfw_monthly_df  <- download_gfw_monthly(2016, 2025)
 #' }
 #'
 #' @export
-fetch_trend_data <- function(trend_start,
-                             current_year,
-                             ccamlr_id = "CCAMLR",
-                             key = gfwr::gfw_auth(),
-                             cache_file = "cache_trend_data.rds") {
+download_gfw_monthly <- function(year_start,
+                             year_end,
+                             cache_file = "cache_month_data.rds") {
 
   # ── Load & validate cache ──────────────────────────────────────────────────
   if (file.exists(cache_file)) {
     existing_t <- readRDS(cache_file)
     if (nrow(existing_t) == 0 || ncol(existing_t) == 0) {
-      message("Trend cache is empty or corrupt — deleting and re-fetching.")
+      message("Month cache is empty or corrupt — deleting and re-fetching.")
       file.remove(cache_file)
     } else {
-      message(glue::glue("Valid trend cache found ({nrow(existing_t)} rows). Loading."))
+      message(glue::glue("Valid month cache found ({nrow(existing_t)} rows). Loading."))
       return(existing_t)
     }
   }
 
   # ── Fetch from API ─────────────────────────────────────────────────────────
-  message("Fetching trend data from GFW API (one call per year)...")
-  years <- trend_start:current_year
+  message("Fetching month data from GFW API (one call per year)...")
+  years <- year_start:year_end
 
   raw_trend_list <- purrr::map(
     years,
     ~ download_gfw_year(.x,
-                        region_id = ccamlr_id,
-                        key       = key,
+                        region_id = "CCAMLR",
+                        key       = gfwr::gfw_auth(),
                         group     = "FLAG",
                         res       = "MONTHLY")
   )
 
-  trend_df <- purrr::map2(raw_trend_list, years, function(df, yr) {
+  gfw_month_df <- purrr::map2(raw_trend_list, years, function(df, yr) {
     if (is.null(df)) return(NULL)
     dplyr::mutate(df, year = as.integer(yr))
   }) |>
     purrr::compact() |>
     dplyr::bind_rows()
 
-  if (nrow(trend_df) == 0) {
+  if (nrow(gfw_month_df) == 0) {
     stop("All trend fetches failed. Check your API token and connection.")
   }
 
-  saveRDS(trend_df, cache_file)
-  message(glue::glue("Trend data cached: {nrow(trend_df)} rows -> {cache_file}"))
+  saveRDS(gfw_month_df, cache_file)
+  message(glue::glue("Trend data cached: {nrow(gfw_month_df)} rows -> {cache_file}"))
 
-  trend_df
+  gfw_month_df
 }
+
 
 # =============================================================================
 # 2. PLOT FUNCTIONS
@@ -224,7 +222,7 @@ fetch_trend_data <- function(trend_start,
 #' fishing hours per 0.1° grid cell on a log₁₀ scale. All panels share the
 #' same colour axis for direct year-to-year comparison.
 #'
-#' @param heatmap_df  Data frame. Raw output from [fetch_heatmap_data()].
+#' @param gfw_df  Data frame. Raw output from [download_gfw_data()].
 #' @param years        Integer vector. Years to display (one panel each).
 #' @param ncol         Integer. Number of columns in the panel layout.
 #'   Defaults to \code{2}.
@@ -247,26 +245,26 @@ fetch_trend_data <- function(trend_start,
 #'
 #' @examples
 #' \dontrun{
-#' heatmap_df <- fetch_heatmap_data(2016:2025)
-#' p <- plot_heatmap_panels(heatmap_df, years = 2016:2025)
+#' gfw_df <- download_gfw_data(years = c(2016:2025))
+#' p <- plot_gfw_heatmap_panels(gfw_df, years = c(2016:2025))
 #' print(p)
 #' ggplot2::ggsave("GFW_plot.pdf", p, width = 12, height = 16)
 #' }
 #'
 #' @export
-plot_heatmap_panels <- function(heatmap_df,
+plot_gfw_heatmap_panels <- function(gfw_df,
                                 years,
                                 ncol = 2,
                                 xlim = c(-80, -35),
                                 ylim = c(-75, -55)) {
 
   # ── Wrangle ────────────────────────────────────────────────────────────────
-  heatmap_clean <- heatmap_df |>
+  heatmap_clean <- gfw_df |>
     dplyr::rename(
-      lat           = dplyr::all_of(.COL_LAT),
-      lon           = dplyr::all_of(.COL_LON),
-      time_range    = dplyr::all_of(.COL_TIME),
-      fishing_hours = dplyr::all_of(.COL_HOURS)
+      lat           = dplyr::all_of("Lat"),
+      lon           = dplyr::all_of("Lon"),
+      time_range    = dplyr::all_of("Time Range"),
+      fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     )
 
   heatmap_total <- heatmap_clean |>
@@ -336,7 +334,10 @@ plot_heatmap_panels <- function(heatmap_df,
         "AIS-based apparent fishing hours per 0.1\u00b0 grid cell, ",
         "{min(years)}\u2013{max(years)}"
       ),
-      caption  = .GFW_CAPTION,
+      caption  = paste0(
+        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
+      ),
       theme    = ggplot2::theme(
         plot.title    = ggplot2::element_text(face = "bold", size = 16),
         plot.subtitle = ggplot2::element_text(colour = "grey40", size = 12),
@@ -352,9 +353,9 @@ plot_heatmap_panels <- function(heatmap_df,
 #' overlaid with a LOESS smooth (95% CI). Each point is labelled with its
 #' rounded value and colour-coded by magnitude.
 #'
-#' @param trend_df    Data frame. Raw output from [fetch_trend_data()].
+#' @param gfw_df    Data frame. Raw output from [download_gfw_data()].
 #' @param trend_start  Integer. First year shown on the x-axis.
-#' @param current_year Integer. Last year shown on the x-axis.
+#' @param trend_end Integer. Last year shown on the x-axis.
 #' @param lat_min      Numeric. Southern latitude boundary for filtering.
 #'   Defaults to \code{-80}.
 #' @param lat_max      Numeric. Northern latitude boundary for filtering.
@@ -375,27 +376,27 @@ plot_heatmap_panels <- function(heatmap_df,
 #'
 #' @examples
 #' \dontrun{
-#' trend_df <- fetch_trend_data(2016, 2025, ccamlr_id, key)
-#' p <- plot_annual_trend(trend_df, trend_start = 2016, current_year = 2025)
+#' gfw_df <- download_gfw_data(years = c(2016:2025))
+#' p <- plot_gfw_annual_trend(gfw_df, trend_start = 2016, trend_end = 2020)
 #' print(p)
 #' }
 #'
 #' @export
-plot_annual_trend <- function(trend_df,
+plot_gfw_annual_trend <- function(gfw_df,
                               trend_start,
-                              current_year,
+                              trend_end,
                               lat_min = -80,
                               lat_max = -35,
                               lon_min = -75,
                               lon_max = -55) {
 
   # ── Wrangle ────────────────────────────────────────────────────────────────
-  annual_totals <- trend_df |>
+  annual_totals <- gfw_df |>
     dplyr::rename(
-      lat           = dplyr::all_of(.COL_LAT),
-      lon           = dplyr::all_of(.COL_LON),
-      time_range    = dplyr::all_of(.COL_TIME),
-      fishing_hours = dplyr::all_of(.COL_HOURS)
+      lat           = dplyr::all_of("Lat"),
+      lon           = dplyr::all_of("Lon"),
+      time_range    = dplyr::all_of("Time Range"),
+      fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     ) |>
     dplyr::filter(
       lat > lat_min, lat < lat_max,
@@ -435,7 +436,7 @@ plot_annual_trend <- function(trend_df,
       min.segment.length = 0.4
     ) +
     scico::scale_colour_scico(palette = "bamako", direction = -1) +
-    ggplot2::scale_x_continuous(breaks = trend_start:current_year) +
+    ggplot2::scale_x_continuous(breaks = trend_start:trend_end) +
     ggplot2::scale_y_continuous(
       labels = scales::comma,
       limits = c(0, NA),
@@ -445,11 +446,14 @@ plot_annual_trend <- function(trend_df,
       title    = "Total Annual Fishing Effort \u2014 Antarctic Peninsula",
       subtitle = glue::glue(
         "Apparent fishing hours (all AIS-equipped fishing vessels), ",
-        "{trend_start}\u2013{current_year}"
+        "{trend_start}\u2013{trend_end}"
       ),
       x       = NULL,
       y       = "Fishing hours (thousands)",
-      caption = .GFW_CAPTION
+      caption = paste0(
+        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
+      )
     ) +
     theme_antarctic()
 }
@@ -462,9 +466,7 @@ plot_annual_trend <- function(trend_df,
 #' below-average months; red indicates above-average. Z-scores are printed
 #' inside each tile.
 #'
-#' @param trend_df    Data frame. Raw output from [fetch_trend_data()].
-#' @param trend_start  Integer. First year included in the climatology.
-#' @param current_year Integer. Last year included in the climatology.
+#' @param gfw_df    Data frame. Raw output from [download_trend_data()].
 #' @param lat_min      Numeric. Southern latitude boundary for filtering.
 #'   Defaults to \code{-80}.
 #' @param lat_max      Numeric. Northern latitude boundary for filtering.
@@ -486,27 +488,25 @@ plot_annual_trend <- function(trend_df,
 #'
 #' @examples
 #' \dontrun{
-#' trend_df <- fetch_trend_data(2016, 2025, ccamlr_id, key)
-#' p <- plot_monthly_anomaly(trend_df, trend_start = 2016, current_year = 2025)
+#' gfw_monthly_df <- download_gfw_monthly(year_start = 2015, year_end = 2020)
+#' p <- plot_gfw_monthly_anomaly(gfw_monthly_df)
 #' print(p)
 #' }
 #'
 #' @export
-plot_monthly_anomaly <- function(trend_df,
-                                 trend_start,
-                                 current_year,
+plot_gfw_monthly_anomaly <- function(gfw_df,
                                  lat_min = -80,
                                  lat_max = -35,
                                  lon_min = -75,
                                  lon_max = -55) {
 
   # ── Wrangle ────────────────────────────────────────────────────────────────
-  trend_clean <- trend_df |>
+  trend_clean <- gfw_df |>
     dplyr::rename(
-      lat           = dplyr::all_of(.COL_LAT),
-      lon           = dplyr::all_of(.COL_LON),
-      time_range    = dplyr::all_of(.COL_TIME),
-      fishing_hours = dplyr::all_of(.COL_HOURS)
+      lat           = dplyr::all_of("Lat"),
+      lon           = dplyr::all_of("Lon"),
+      time_range    = dplyr::all_of("Time Range"),
+      fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     ) |>
     dplyr::filter(
       lat > lat_min, lat < lat_max,
@@ -571,12 +571,14 @@ plot_monthly_anomaly <- function(trend_df,
     ggplot2::labs(
       title    = "Monthly Fishing Effort Anomaly \u2014 Antarctic Peninsula",
       subtitle = glue::glue(
-        "Standardised deviation from long-term monthly mean, ",
-        "{trend_start}\u2013{current_year}"
+        "Standardised deviation from long-term monthly mean"
       ),
       x       = NULL,
       y       = NULL,
-      caption = .GFW_CAPTION
+      caption = paste0(
+        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
+      )
     ) +
     theme_antarctic() +
     ggplot2::theme(
@@ -592,9 +594,9 @@ plot_monthly_anomaly <- function(trend_df,
 #' Stacks the annual effort trend (panel A) and the monthly anomaly heatmap
 #' (panel B) vertically using [patchwork::patchwork-package].
 #'
-#' @param trend_df    Data frame. Raw output from [fetch_trend_data()].
+#' @param gfw_df    Data frame. Raw output from [download_gfw_data()].
 #' @param trend_start  Integer. First year of the trend period.
-#' @param current_year Integer. Last year of the trend period.
+#' @param trend_end Integer. Last year of the trend period.
 #' @param lat_min      Numeric. Southern latitude boundary. Defaults to
 #'   \code{-80}.
 #' @param lat_max      Numeric. Northern latitude boundary. Defaults to
@@ -606,34 +608,34 @@ plot_monthly_anomaly <- function(trend_df,
 #'
 #' @return A [patchwork::patchwork-package] object.
 #'
-#' @seealso [plot_annual_trend()], [plot_monthly_anomaly()]
+#' @seealso [plot_gfw_annual_trend()], [plot_gfw_monthly_anomaly()]
 #'
 #' @importFrom patchwork plot_annotation
 #' @importFrom ggplot2 theme element_text
 #'
 #' @examples
 #' \dontrun{
-#' trend_df <- fetch_trend_data(2016, 2025, ccamlr_id, key)
-#' p <- plot_temporal_composite(trend_df, 2016, 2025)
+#' gfw_df <- download_gfw_data(years = c(2015:2025))
+#' p <- plot_gfw_temporal_composite(gfw_df, trend_start = 2016, trend_end = 2025)
 #' print(p)
 #' ggplot2::ggsave("GFW_AnnualMonthly_trend.pdf", p, width = 12, height = 13)
 #' }
 #'
 #' @export
-plot_temporal_composite <- function(trend_df,
+plot_gfw_temporal_composite <- function(gfw_df,
                                     trend_start,
-                                    current_year,
+                                    trend_end,
                                     lat_min = -80,
                                     lat_max = -35,
                                     lon_min = -75,
                                     lon_max = -55) {
 
-  p_annual <- plot_annual_trend(
-    trend_df, trend_start, current_year,
+  p_annual <- plot_gfw_annual_trend(
+    gfw_df, trend_start, trend_end,
     lat_min, lat_max, lon_min, lon_max
   )
-  p_anom <- plot_monthly_anomaly(
-    trend_df, trend_start, current_year,
+  p_anom <- plot_gfw_monthly_anomaly(
+    gfw_df, trend_start, trend_end,
     lat_min, lat_max, lon_min, lon_max
   )
 
@@ -652,7 +654,7 @@ plot_temporal_composite <- function(trend_df,
 #' Aggregates annual fishing hours by gear type and displays them as a stacked
 #' bar chart. Uncommon gear types are grouped into an "Other" category.
 #'
-#' @param heatmap_df  Data frame. Raw output from [fetch_heatmap_data()].
+#' @param gfw_df  Data frame. Raw output from [download_gfw_data()].
 #' @param years        Integer vector. Years to display on the x-axis.
 #' @param keep_gears   Character vector. Named gear types to show individually;
 #'   all others are collapsed into \code{"Other"}. Defaults to the eight most
@@ -669,14 +671,14 @@ plot_temporal_composite <- function(trend_df,
 #'
 #' @examples
 #' \dontrun{
-#' heatmap_df <- fetch_heatmap_data(2016:2025, ccamlr_id, key)
-#' p <- plot_gear_trend(heatmap_df, years = 2016:2025)
+#' gfw_df <- download_gfw_data(years = c(2016:2025))
+#' p <- plot_gfw_gear_trend(gfw_df, years = c(2016:2025))
 #' print(p)
 #' ggplot2::ggsave("GFW_FisheriesGear.pdf", p, width = 12, height = 8)
 #' }
 #'
 #' @export
-plot_gear_trend <- function(heatmap_df,
+plot_gfw_gear_trend <- function(gfw_df,
                             years,
                             keep_gears = c("trawlers", "drifting_longlines",
                                            "set_longlines", "squid_jigger",
@@ -684,12 +686,12 @@ plot_gear_trend <- function(heatmap_df,
                                            "set_gillnets", "pots_and_traps")) {
 
   # ── Wrangle ────────────────────────────────────────────────────────────────
-  gear_annual <- heatmap_df |>
+  gear_annual <- gfw_df |>
     dplyr::rename(
-      lat           = dplyr::all_of(.COL_LAT),
-      lon           = dplyr::all_of(.COL_LON),
-      time_range    = dplyr::all_of(.COL_TIME),
-      fishing_hours = dplyr::all_of(.COL_HOURS)
+      lat           = dplyr::all_of("Lat"),
+      lon           = dplyr::all_of("Lon"),
+      time_range    = dplyr::all_of("Time Range"),
+      fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     ) |>
     dplyr::rename(geartype = dplyr::any_of("geartype")) |>
     dplyr::group_by(year, geartype) |>
@@ -734,7 +736,10 @@ plot_gear_trend <- function(heatmap_df,
       ),
       x       = NULL,
       y       = "Fishing hours (thousands)",
-      caption = .GFW_CAPTION
+      caption = paste0(
+        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
+      )
     ) +
     theme_antarctic() +
     ggplot2::theme(
