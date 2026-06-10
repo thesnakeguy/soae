@@ -1,0 +1,214 @@
+# soae
+
+**State of the Antarctic Environment (SOAE) R package**
+
+  This package is used to create figures and analyses for the State of the Antarctic Environment (SOAE) report.
+
+It is a collaborative R package hosted on GitHub.
+
+---
+
+  ## 🧭 Getting started
+
+  ### 1. Clone the repository
+
+  Open RStudio and run:
+
+  ```r
+usethis::create_from_github("YOUR_GITHUB_USERNAME/soae")
+```
+
+Or clone the repository manually and open the `.Rproj` file.
+
+---
+
+  ### 2. Install required tools
+
+  Make sure you have the required development tools installed:
+
+  ```r
+install.packages(c(
+  "devtools",
+  "usethis",
+  "roxygen2",
+  "testthat"
+))
+```
+
+---
+
+  ## 📦 Working with the package
+
+  ### Load the package during development
+
+  Do NOT use `library(soae)` while developing.
+
+Instead use:
+
+  ```r
+devtools::load_all()
+```
+
+This makes all functions in the package available immediately.
+
+---
+
+  ## ✍️ Adding or editing functions
+
+  ### ⚠️ IMPORTANT: Where to write functions
+
+  All functions must be added or edited directly in the R/ subdirectory. Create an .R thematic scripts if
+  it doesn't exist yet. Roxygen2::roxygenise will look into the R/ folder and document all .R scripts.
+
+```
+eg:
+R/biology.R -> all things biology
+
+```
+
+---
+
+  ### Step 1: Write or edit your function / copy a nice template
+
+  Example:
+
+  ```r
+#' Short title of the function
+#'
+#' Longer description of what the function does.
+#'
+#' @param x Description of input
+#' @return Description of output
+#' @examples
+#' my_function(1:10)
+#' @export
+my_function <- function(x) {
+  mean(x, na.rm = TRUE)
+}
+```
+
+---
+
+  ## 📚 Updating documentation
+
+  Whenever you add or change functions, run:
+
+  ```r
+roxygen2::roxygenize()
+```
+
+This will:
+
+  * Generate/update documentation in `man/`
+* Update the `NAMESPACE` file automatically
+
+⚠️ Never edit `NAMESPACE` manually.
+
+---
+
+  ## 📦 Updating dependencies
+
+  If your code uses a new package:
+
+  👉 You manually edit the `DESCRIPTION` file.
+
+Add the package under:
+
+  ```
+Imports:
+  ```
+
+Example:
+
+  ```
+Imports:
+  ggplot2,
+dplyr,
+sf
+```
+
+Do not use helper functions to edit DESCRIPTION.
+
+---
+
+  ## 🔍 Checking the package
+
+  Before pushing changes, run:
+
+  ```r
+devtools::check()
+```
+
+Aim for:
+
+* ✔ 0 errors
+* ✔ 0 warnings
+* ✔ 0 notes (or minimal notes)
+
+---
+
+  ## 🌿 Git workflow (collaboration)
+
+  ### 1. Create a branch
+
+  ```bash
+git checkout -b feature-my-change
+```
+
+### 2. Commit changes
+
+```bash
+git add .
+git commit -m "Describe your change"
+```
+
+### 3. Push to GitHub
+
+```bash
+git push origin feature-my-change
+```
+
+Then open a Pull Request on GitHub.
+
+---
+
+  ## 🔄 Typical workflow
+
+  1. Pull latest changes from GitHub
+2. Create a new branch
+3. Edit or add functions in `R/functions.R`
+4. Update documentation:
+
+  ```r
+roxygen2::roxygenize()
+```
+
+5. Check the package:
+
+  ```r
+devtools::check()
+```
+
+6. Commit and push
+7. Open a Pull Request
+
+---
+
+  ## 🧪 Key rules
+
+* All functions go in `R/functions.R`
+* Always run `roxygen2::roxygenize()` after changes
+* Always run `devtools::check()` before merging
+* Never edit `NAMESPACE` manually
+* Update `DESCRIPTION` manually for dependencies
+* Keep functions simple and modular
+
+---
+
+  ## 📬 Questions
+
+  If you're unsure about anything, open an issue or ask the maintainer.
+
+---
+
+Happy coding 🚀

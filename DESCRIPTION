@@ -1,0 +1,31 @@
+Package: soae
+Title: State of the Antarctic Environment (soae) package
+Version: 0.1.0
+Authors@R: 
+    person(
+    "Pablo",
+    "Deschepper",
+    email = "pdeschepper@naturalsciences.be",
+    role = c("aut", "cre"))
+Description: This package can be used to render the figures for
+            the State of the Antarctic Environment (SOAE) report.
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+Imports:
+    dplyr,
+    gfwr,
+    ggplot2,
+    sf,
+    patchwork,
+    ggrepel,
+    rnaturalearth,
+    rnaturalearthdata,
+    glue,
+    stringr,
+    purrr,
+    scales,
+    scico
+Remotes:
+    thomasp85/scico
+License: MIT + file LICENSE
