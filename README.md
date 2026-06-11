@@ -48,7 +48,7 @@ This makes all functions in the package available immediately.
 All functions must be added or edited directly in the `R/` subdirectory. Create a thematic `.R` script if one doesn't exist yet — `roxygen2::roxygenise()` will scan the `R/` folder and document all scripts automatically.
 
 ```
-R/biology.R          # all things biology
+R/gfw.R          # all things Global Fisheries Watch (gfw)
 R/antarctic_theme.R  # stores the shared ggplot theme
 ```
 
