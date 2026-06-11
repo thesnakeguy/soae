@@ -161,7 +161,7 @@ Then open a **Pull Request** on GitHub.
 
 | Rule | Detail |
 |------|--------|
-| All functions go in `R/` | Organised by theme (e.g. `biology.R`) |
+| All functions go in `R/` | Organised by theme (e.g. `gfw.R`, `oceanography.R` etc) |
 | Run `roxygenize()` after every change | Keeps docs and `NAMESPACE` in sync |
 | Run `check()` before merging | Aim for 0 errors, 0 warnings |
 | Never edit `NAMESPACE` manually | Always let roxygen2 handle it |
