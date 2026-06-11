@@ -15,16 +15,16 @@ plot_gfw_monthly_anomaly(
 \arguments{
 \item{gfw_df}{Data frame. Raw output from \code{\link[=download_trend_data]{download_trend_data()}}.}
 
-\item{lat_min}{Numeric. Southern latitude boundary for filtering.
+\item{lat_min}{Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-80}.}
 
-\item{lat_max}{Numeric. Northern latitude boundary for filtering.
+\item{lat_max}{Numeric. Northern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-35}.}
 
-\item{lon_min}{Numeric. Western longitude boundary for filtering.
+\item{lon_min}{Numeric. Western longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-75}.}
 
-\item{lon_max}{Numeric. Eastern longitude boundary for filtering.
+\item{lon_max}{Numeric. Eastern longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-55}.}
 }
 \value{
@@ -34,7 +34,7 @@ A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 Computes and displays the standardized deviation (z-score) of monthly
 fishing effort from the long-term monthly mean. Blue tiles indicate
 below-average months; red indicates above-average. Z-scores are printed
-inside each tile.
+inside each tile. Coordinate bounderies default to the Antarctic Peninsula.
 }
 \examples{
 \dontrun{

@@ -168,6 +168,8 @@ Then open a **Pull Request** on GitHub.
 | Edit `DESCRIPTION` manually for dependencies | No helper functions |
 | Keep functions simple and modular | One concern per function |
 | Use the shared `antarctic_theme` | Consistent look across all figures |
+| Start a function with `download` if it pulls in external data | Consistent nomenclature |
+| Reference the type of function in the name | eg: `plot_gfw_***` for gfw plotting functions |
 
 ---
 

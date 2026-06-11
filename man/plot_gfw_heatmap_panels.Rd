@@ -21,10 +21,10 @@ plot_gfw_heatmap_panels(
 Defaults to \code{2}.}
 
 \item{xlim}{Numeric vector of length 2. Longitude limits of the
-map window. Defaults to \code{c(-80, -35)}.}
+map window. Defaults to the Antarctic Peninsula \code{c(-80, -35)}.}
 
 \item{ylim}{Numeric vector of length 2. Latitude limits of the
-map window. Defaults to \code{c(-75, -55)}.}
+map window. Defaults to the Antarctic Peninsula \code{c(-75, -55)}.}
 }
 \value{
 A \link[patchwork:patchwork-package]{patchwork::patchwork-package} object containing all annual panels plus a shared

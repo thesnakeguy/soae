@@ -21,16 +21,16 @@ plot_gfw_annual_trend(
 
 \item{trend_end}{Integer. Last year shown on the x-axis.}
 
-\item{lat_min}{Numeric. Southern latitude boundary for filtering.
+\item{lat_min}{Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-80}.}
 
-\item{lat_max}{Numeric. Northern latitude boundary for filtering.
+\item{lat_max}{Numeric. Northern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-35}.}
 
-\item{lon_min}{Numeric. Western longitude boundary for filtering.
+\item{lon_min}{Numeric. Western longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-75}.}
 
-\item{lon_max}{Numeric. Eastern longitude boundary for filtering.
+\item{lon_max}{Numeric. Eastern longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-55}.}
 }
 \value{
@@ -39,7 +39,8 @@ A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 \description{
 Displays total apparent fishing hours per year as a scatter-line chart
 overlaid with a LOESS smooth (95\% CI). Each point is labelled with its
-rounded value and colour-coded by magnitude.
+rounded value and colour-coded by magnitude. Coordinate boundaries default to
+the Antarctic Peninsula.
 }
 \examples{
 \dontrun{

@@ -3,7 +3,7 @@
 ###############################################################################
 
 ###############################################################################
-## FISHERIES: GLOBAL FISHING WATCH ####
+## FISHERIES: GLOBAL FISHING WATCH (GFW) ####
 ###############################################################################
 
 # =============================================================================
@@ -227,9 +227,9 @@ download_gfw_monthly <- function(year_start,
 #' @param ncol         Integer. Number of columns in the panel layout.
 #'   Defaults to \code{2}.
 #' @param xlim         Numeric vector of length 2. Longitude limits of the
-#'   map window. Defaults to \code{c(-80, -35)}.
+#'   map window. Defaults to the Antarctic Peninsula \code{c(-80, -35)}.
 #' @param ylim         Numeric vector of length 2. Latitude limits of the
-#'   map window. Defaults to \code{c(-75, -55)}.
+#'   map window. Defaults to the Antarctic Peninsula \code{c(-75, -55)}.
 #'
 #' @return A [patchwork::patchwork-package] object containing all annual panels plus a shared
 #'   title and caption. Print or pass to [ggplot2::ggsave()].
@@ -351,18 +351,19 @@ plot_gfw_heatmap_panels <- function(gfw_df,
 #'
 #' Displays total apparent fishing hours per year as a scatter-line chart
 #' overlaid with a LOESS smooth (95% CI). Each point is labelled with its
-#' rounded value and colour-coded by magnitude.
+#' rounded value and colour-coded by magnitude. Coordinate boundaries default to
+#' the Antarctic Peninsula.
 #'
 #' @param gfw_df    Data frame. Raw output from [download_gfw_data()].
 #' @param trend_start  Integer. First year shown on the x-axis.
 #' @param trend_end Integer. Last year shown on the x-axis.
-#' @param lat_min      Numeric. Southern latitude boundary for filtering.
+#' @param lat_min      Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-80}.
-#' @param lat_max      Numeric. Northern latitude boundary for filtering.
+#' @param lat_max      Numeric. Northern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-35}.
-#' @param lon_min      Numeric. Western longitude boundary for filtering.
+#' @param lon_min      Numeric. Western longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-75}.
-#' @param lon_max      Numeric. Eastern longitude boundary for filtering.
+#' @param lon_max      Numeric. Eastern longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-55}.
 #'
 #' @return A [ggplot2::ggplot] object.
@@ -464,16 +465,16 @@ plot_gfw_annual_trend <- function(gfw_df,
 #' Computes and displays the standardized deviation (z-score) of monthly
 #' fishing effort from the long-term monthly mean. Blue tiles indicate
 #' below-average months; red indicates above-average. Z-scores are printed
-#' inside each tile.
+#' inside each tile. Coordinate bounderies default to the Antarctic Peninsula.
 #'
 #' @param gfw_df    Data frame. Raw output from [download_trend_data()].
-#' @param lat_min      Numeric. Southern latitude boundary for filtering.
+#' @param lat_min      Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-80}.
-#' @param lat_max      Numeric. Northern latitude boundary for filtering.
+#' @param lat_max      Numeric. Northern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-35}.
-#' @param lon_min      Numeric. Western longitude boundary for filtering.
+#' @param lon_min      Numeric. Western longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-75}.
-#' @param lon_max      Numeric. Eastern longitude boundary for filtering.
+#' @param lon_max      Numeric. Eastern longitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-55}.
 #'
 #' @return A [ggplot2::ggplot] object.
@@ -592,19 +593,19 @@ plot_gfw_monthly_anomaly <- function(gfw_df,
 #' Plot combined annual trend + monthly anomaly panel
 #'
 #' Stacks the annual effort trend (panel A) and the monthly anomaly heatmap
-#' (panel B) vertically using [patchwork::patchwork-package].
+#' (panel B) vertically using [patchwork::patchwork-package]. Defaults to the Antarctic Peninsula.
 #'
 #' @param gfw_df    Data frame. Raw output from [download_gfw_data()].
 #' @param trend_start  Integer. First year of the trend period.
 #' @param trend_end Integer. Last year of the trend period.
 #' @param lat_min      Numeric. Southern latitude boundary. Defaults to
-#'   \code{-80}.
+#'   \code{-80}, the Antarctic Peninsula.
 #' @param lat_max      Numeric. Northern latitude boundary. Defaults to
-#'   \code{-35}.
+#'   \code{-35}, the Antarctic Peninsula.
 #' @param lon_min      Numeric. Western longitude boundary. Defaults to
-#'   \code{-75}.
+#'   \code{-75}, the Antarctic Peninsula.
 #' @param lon_max      Numeric. Eastern longitude boundary. Defaults to
-#'   \code{-55}.
+#'   \code{-55}, the Antarctic Peninsula.
 #'
 #' @return A [patchwork::patchwork-package] object.
 #'
@@ -652,13 +653,22 @@ plot_gfw_temporal_composite <- function(gfw_df,
 #' Plot annual fishing effort by gear type (stacked bar chart)
 #'
 #' Aggregates annual fishing hours by gear type and displays them as a stacked
-#' bar chart. Uncommon gear types are grouped into an "Other" category.
+#' bar chart. Uncommon gear types are grouped into an "Other" category. Coordinates are by default targetting
+#' the Antarctic Peninsula.
 #'
 #' @param gfw_df  Data frame. Raw output from [download_gfw_data()].
 #' @param years        Integer vector. Years to display on the x-axis.
 #' @param keep_gears   Character vector. Named gear types to show individually;
 #'   all others are collapsed into \code{"Other"}. Defaults to the eight most
 #'   common Southern Ocean gear types.
+#' @param lat_min      Numeric. Southern latitude boundary. Defaults to
+#'   \code{-80}, the Antarctic Peninsula.
+#' @param lat_max      Numeric. Northern latitude boundary. Defaults to
+#'   \code{-35}, the Antarctic Peninsula.
+#' @param lon_min      Numeric. Western longitude boundary. Defaults to
+#'   \code{-75}, the Antarctic Peninsula.
+#' @param lon_max      Numeric. Eastern longitude boundary. Defaults to
+#'   \code{-55}, the Antarctic Peninsula.
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
@@ -680,6 +690,10 @@ plot_gfw_temporal_composite <- function(gfw_df,
 #' @export
 plot_gfw_gear_trend <- function(gfw_df,
                             years,
+                            lat_min = -80,
+                            lat_max = -35,
+                            lon_min = -75,
+                            lon_max = -55,
                             keep_gears = c("trawlers", "drifting_longlines",
                                            "set_longlines", "squid_jigger",
                                            "pole_and_line", "purse_seines",
@@ -692,6 +706,10 @@ plot_gfw_gear_trend <- function(gfw_df,
       lon           = dplyr::all_of("Lon"),
       time_range    = dplyr::all_of("Time Range"),
       fishing_hours = dplyr::all_of("Apparent Fishing Hours")
+    ) |>
+    dplyr::filter(
+      lat > lat_min, lat < lat_max,
+      lon > lon_min, lon < lon_max
     ) |>
     dplyr::rename(geartype = dplyr::any_of("geartype")) |>
     dplyr::group_by(year, geartype) |>

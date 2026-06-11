@@ -7,6 +7,10 @@
 plot_gfw_gear_trend(
   gfw_df,
   years,
+  lat_min = -80,
+  lat_max = -35,
+  lon_min = -75,
+  lon_max = -55,
   keep_gears = c("trawlers", "drifting_longlines", "set_longlines", "squid_jigger",
     "pole_and_line", "purse_seines", "set_gillnets", "pots_and_traps")
 )
@@ -15,6 +19,18 @@ plot_gfw_gear_trend(
 \item{gfw_df}{Data frame. Raw output from \code{\link[=download_gfw_data]{download_gfw_data()}}.}
 
 \item{years}{Integer vector. Years to display on the x-axis.}
+
+\item{lat_min}{Numeric. Southern latitude boundary. Defaults to
+\code{-80}, the Antarctic Peninsula.}
+
+\item{lat_max}{Numeric. Northern latitude boundary. Defaults to
+\code{-35}, the Antarctic Peninsula.}
+
+\item{lon_min}{Numeric. Western longitude boundary. Defaults to
+\code{-75}, the Antarctic Peninsula.}
+
+\item{lon_max}{Numeric. Eastern longitude boundary. Defaults to
+\code{-55}, the Antarctic Peninsula.}
 
 \item{keep_gears}{Character vector. Named gear types to show individually;
 all others are collapsed into \code{"Other"}. Defaults to the eight most
@@ -25,7 +41,8 @@ A \link[ggplot2:ggplot]{ggplot2::ggplot} object.
 }
 \description{
 Aggregates annual fishing hours by gear type and displays them as a stacked
-bar chart. Uncommon gear types are grouped into an "Other" category.
+bar chart. Uncommon gear types are grouped into an "Other" category. Coordinates are by default targetting
+the Antarctic Peninsula.
 }
 \examples{
 \dontrun{

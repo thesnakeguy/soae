@@ -22,23 +22,23 @@ plot_gfw_temporal_composite(
 \item{trend_end}{Integer. Last year of the trend period.}
 
 \item{lat_min}{Numeric. Southern latitude boundary. Defaults to
-\code{-80}.}
+\code{-80}, the Antarctic Peninsula.}
 
 \item{lat_max}{Numeric. Northern latitude boundary. Defaults to
-\code{-35}.}
+\code{-35}, the Antarctic Peninsula.}
 
 \item{lon_min}{Numeric. Western longitude boundary. Defaults to
-\code{-75}.}
+\code{-75}, the Antarctic Peninsula.}
 
 \item{lon_max}{Numeric. Eastern longitude boundary. Defaults to
-\code{-55}.}
+\code{-55}, the Antarctic Peninsula.}
 }
 \value{
 A \link[patchwork:patchwork-package]{patchwork::patchwork-package} object.
 }
 \description{
 Stacks the annual effort trend (panel A) and the monthly anomaly heatmap
-(panel B) vertically using \link[patchwork:patchwork-package]{patchwork::patchwork-package}.
+(panel B) vertically using \link[patchwork:patchwork-package]{patchwork::patchwork-package}. Defaults to the Antarctic Peninsula.
 }
 \examples{
 \dontrun{
