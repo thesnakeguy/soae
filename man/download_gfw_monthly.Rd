@@ -31,5 +31,5 @@ gfw_monthly_df  <- download_gfw_monthly(2016, 2025)
 
 }
 \seealso{
-\code{\link[=download_gfw_year]{download_gfw_year()}}, \code{\link[=fetch_heatmap_data]{fetch_heatmap_data()}}
+\code{\link[=download_gfw_year]{download_gfw_year()}}, \code{\link[=download_gfw_data]{download_gfw_data()}}
 }

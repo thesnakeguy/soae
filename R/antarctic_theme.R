@@ -11,8 +11,7 @@
 #'
 #' @return A [ggplot2::theme()] object.
 #'
-#' @importFrom ggplot2 theme_minimal theme element_text element_blank
-#'   element_line margin
+#' @importFrom ggplot2 theme_minimal theme element_text element_blank element_line margin
 #'
 #' @examples
 #' \dontrun{

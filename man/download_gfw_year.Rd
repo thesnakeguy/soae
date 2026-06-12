@@ -15,6 +15,10 @@ download_gfw_year(
 \arguments{
 \item{year}{Integer. Calendar year to fetch (e.g. \code{2023}).}
 
+\item{region_id}{Character. Region identifier.}
+
+\item{key}{Character. Your GFW key. Defaults to the environment variable "GFW_TOKEN" as set by \code{\link[gfwr:gfw_auth]{gfwr::gfw_auth()}}.}
+
 \item{group}{Character. Grouping variable passed to
 \code{gfw_ais_fishing_hours()}. Defaults to \code{"GEARTYPE"}.}
 

@@ -17,6 +17,8 @@
 #' Then restart R. Obtain a free token at https://globalfishingwatch.org/our-apis/
 #'
 #' @param year       Integer. Calendar year to fetch (e.g. \code{2023}).
+#' @param region_id  Character. Region identifier.
+#' @param key        Character. Your GFW key. Defaults to the environment variable "GFW_TOKEN" as set by [gfwr::gfw_auth()].
 #' @param group      Character. Grouping variable passed to
 #'   \code{gfw_ais_fishing_hours()}. Defaults to \code{"GEARTYPE"}.
 #' @param res        Character. Temporal resolution: \code{"YEARLY"} or
@@ -79,7 +81,7 @@ download_gfw_year <- function(year,
 #'   containing the raw columns returned by the GFW API plus an integer
 #'   \code{year} column.
 #'
-#' @seealso [download_gfw_year()], [download_trend_data()]
+#' @seealso [download_gfw_year()], [download_gfw_monthly()]
 #'
 #' @importFrom purrr map map2 compact
 #' @importFrom dplyr bind_rows mutate
@@ -99,7 +101,7 @@ download_gfw_data <- function(years,
   if (file.exists(cache_file)) {
     existing <- readRDS(cache_file)
     if (nrow(existing) == 0 || ncol(existing) == 0) {
-      message("Heatmap cache is empty or corrupt — deleting and re-fetching.")
+      message("Heatmap cache is empty or corrupt \u2014 deleting and re-fetching.")
       file.remove(cache_file)
     } else {
       message(glue::glue("Valid heatmap cache found ({nrow(existing)} rows). Loading."))
@@ -152,12 +154,12 @@ download_gfw_data <- function(years,
 #' @return A data frame with one row per year × flag × month × grid cell,
 #'   containing raw GFW API columns plus an integer \code{year} column.
 #'
-#' @seealso [download_gfw_year()], [fetch_heatmap_data()]
+#' @seealso [download_gfw_year()], [download_gfw_data()]
 #'
 #' @importFrom purrr map map2 compact
 #' @importFrom dplyr bind_rows mutate
 #' @importFrom glue glue
-#' @importFrom gfwr gfw_auth()
+#' @importFrom gfwr gfw_auth
 #'
 #' @examples
 #' \dontrun{
@@ -173,7 +175,7 @@ download_gfw_monthly <- function(year_start,
   if (file.exists(cache_file)) {
     existing_t <- readRDS(cache_file)
     if (nrow(existing_t) == 0 || ncol(existing_t) == 0) {
-      message("Month cache is empty or corrupt — deleting and re-fetching.")
+      message("Month cache is empty or corrupt \u2014 deleting and re-fetching.")
       file.remove(cache_file)
     } else {
       message(glue::glue("Valid month cache found ({nrow(existing_t)} rows). Loading."))
@@ -234,7 +236,7 @@ download_gfw_monthly <- function(year_start,
 #' @return A [patchwork::patchwork-package] object containing all annual panels plus a shared
 #'   title and caption. Print or pass to [ggplot2::ggsave()].
 #'
-#' @importFrom dplyr rename group_by summarise mutate filter all_of
+#' @importFrom dplyr .data rename group_by summarise mutate filter all_of
 #' @importFrom ggplot2 ggplot geom_tile geom_sf aes coord_sf labs theme element_text element_blank guide_colorbar unit
 #' @importFrom scico scale_fill_scico
 #' @importFrom rnaturalearth ne_countries
@@ -268,10 +270,10 @@ plot_gfw_heatmap_panels <- function(gfw_df,
     )
 
   heatmap_total <- heatmap_clean |>
-    dplyr::group_by(year, lat, lon) |>
-    dplyr::summarise(fishing_hours = sum(fishing_hours, na.rm = TRUE),
+    dplyr::group_by(.data$year, .data$lat, .data$lon) |>
+    dplyr::summarise(fishing_hours = sum(.data$fishing_hours, na.rm = TRUE),
                      .groups = "drop") |>
-    dplyr::mutate(log_hours = log10(fishing_hours + 1))
+    dplyr::mutate(log_hours = log10(.data$fishing_hours + 1))
 
   # ── Shared spatial objects ─────────────────────────────────────────────────
   world_sf <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
@@ -287,12 +289,12 @@ plot_gfw_heatmap_panels <- function(gfw_df,
 
   # ── Single-year panel builder ──────────────────────────────────────────────
   make_panel <- function(yr) {
-    df_yr <- dplyr::filter(heatmap_total, year == yr)
+    df_yr <- dplyr::filter(heatmap_total, .data$year == yr)
 
     ggplot2::ggplot() +
       ggplot2::geom_tile(
         data = df_yr,
-        ggplot2::aes(x = lon, y = lat, fill = log_hours),
+        ggplot2::aes(x = .data$lon, y = .data$lat, fill = .data$log_hours),
         linewidth = 0
       ) +
       ggplot2::geom_sf(
@@ -335,7 +337,7 @@ plot_gfw_heatmap_panels <- function(gfw_df,
         "{min(years)}\u2013{max(years)}"
       ),
       caption  = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       ),
       theme    = ggplot2::theme(
@@ -400,17 +402,17 @@ plot_gfw_annual_trend <- function(gfw_df,
       fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     ) |>
     dplyr::filter(
-      lat > lat_min, lat < lat_max,
-      lon > lon_min, lon < lon_max
+      .data$lat > lat_min, .data$lat < lat_max,
+      .data$lon > lon_min, .data$lon < lon_max
     ) |>
-    dplyr::group_by(year) |>
-    dplyr::summarise(annual_hours = sum(fishing_hours, na.rm = TRUE),
+    dplyr::group_by(.data$year) |>
+    dplyr::summarise(annual_hours = sum(.data$fishing_hours, na.rm = TRUE),
                      .groups = "drop") |>
-    dplyr::mutate(cal_year = as.integer(year))
+    dplyr::mutate(cal_year = as.integer(.data$year))
 
   # ── Plot ───────────────────────────────────────────────────────────────────
   ggplot2::ggplot(annual_totals,
-                  ggplot2::aes(x = cal_year, y = annual_hours / 1e3)) +
+                  ggplot2::aes(x = .data$cal_year, y = .data$annual_hours / 1e3)) +
     ggplot2::geom_smooth(
       method    = "loess",
       span      = 0.9,
@@ -425,12 +427,12 @@ plot_gfw_annual_trend <- function(gfw_df,
       linetype  = "dashed"
     ) +
     ggplot2::geom_point(
-      ggplot2::aes(colour = annual_hours / 1e6),
+      ggplot2::aes(colour = .data$annual_hours / 1e6),
       size         = 4.5,
       show.legend  = FALSE
     ) +
     ggrepel::geom_text_repel(
-      ggplot2::aes(label = paste0(round(annual_hours / 1e3, 1), "")),
+      ggplot2::aes(label = paste0(round(.data$annual_hours / 1e3, 1), "")),
       size               = 3,
       colour             = "grey30",
       nudge_y            = 0.06 * max(annual_totals$annual_hours / 1e3),
@@ -452,7 +454,7 @@ plot_gfw_annual_trend <- function(gfw_df,
       x       = NULL,
       y       = "Fishing hours (thousands)",
       caption = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       )
     ) +
@@ -467,7 +469,7 @@ plot_gfw_annual_trend <- function(gfw_df,
 #' below-average months; red indicates above-average. Z-scores are printed
 #' inside each tile. Coordinate bounderies default to the Antarctic Peninsula.
 #'
-#' @param gfw_df    Data frame. Raw output from [download_trend_data()].
+#' @param gfw_df    Data frame. Raw output from [download_gfw_monthly()].
 #' @param lat_min      Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-80}.
 #' @param lat_max      Numeric. Northern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
@@ -479,12 +481,12 @@ plot_gfw_annual_trend <- function(gfw_df,
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
-#' @importFrom dplyr rename filter group_by summarise mutate left_join
-#'   if_else all_of
+#' @importFrom dplyr rename filter group_by summarise mutate left_join if_else all_of
 #' @importFrom stringr str_replace
 #' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_y_discrete labs theme element_blank element_text expansion guide_colorbar unit
 #' @importFrom scico scale_fill_scico
 #' @importFrom scales squish
+#' @importFrom stats sd
 #' @importFrom glue glue
 #'
 #' @examples
@@ -510,50 +512,50 @@ plot_gfw_monthly_anomaly <- function(gfw_df,
       fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     ) |>
     dplyr::filter(
-      lat > lat_min, lat < lat_max,
-      lon > lon_min, lon < lon_max
+      .data$lat > lat_min, .data$lat < lat_max,
+      .data$lon > lon_min, .data$lon < lon_max
     )
 
   trend_dated <- trend_clean |>
     dplyr::mutate(
-      cal_year  = stringr::str_replace(time_range, "^(\\d{4})-\\d{2}$", "\\1"),
+      cal_year  = stringr::str_replace(.data$time_range, "^(\\d{4})-\\d{2}$", "\\1"),
       cal_month = as.factor(stringr::str_replace(
-        time_range, "^\\d{4}-(\\d{2})$", "\\1"
+        .data$time_range, "^\\d{4}-(\\d{2})$", "\\1"
       )),
-      month_lbl = factor(month.abb[as.integer(cal_month)], levels = month.abb)
+      month_lbl = factor(month.abb[as.integer(.data$cal_month)], levels = month.abb)
     )
 
   monthly_totals <- trend_dated |>
-    dplyr::group_by(cal_year, cal_month, month_lbl) |>
-    dplyr::summarise(fishing_hours = sum(fishing_hours, na.rm = TRUE),
+    dplyr::group_by(.data$cal_year, .data$cal_month, .data$month_lbl) |>
+    dplyr::summarise(fishing_hours = sum(.data$fishing_hours, na.rm = TRUE),
                      .groups = "drop")
 
   monthly_clim <- monthly_totals |>
-    dplyr::group_by(cal_month) |>
+    dplyr::group_by(.data$cal_month) |>
     dplyr::summarise(
-      clim_mean = mean(fishing_hours, na.rm = TRUE),
-      clim_sd   = sd(fishing_hours,   na.rm = TRUE),
+      clim_mean = mean(.data$fishing_hours, na.rm = TRUE),
+      clim_sd   = sd(.data$fishing_hours,   na.rm = TRUE),
       .groups   = "drop"
     )
 
   monthly_anom <- monthly_totals |>
     dplyr::left_join(monthly_clim, by = "cal_month") |>
     dplyr::mutate(anomaly_std = dplyr::if_else(
-      clim_sd > 0,
-      (fishing_hours - clim_mean) / clim_sd,
+      .data$clim_sd > 0,
+      (.data$fishing_hours - .data$clim_mean) / .data$clim_sd,
       0
     ))
 
   # ── Plot ───────────────────────────────────────────────────────────────────
   monthly_anom |>
     ggplot2::ggplot(ggplot2::aes(
-      x    = factor(cal_year),
-      y    = month_lbl,
-      fill = anomaly_std
+      x    = factor(.data$cal_year),
+      y    = .data$month_lbl,
+      fill = .data$anomaly_std
     )) +
     ggplot2::geom_tile(colour = "white", linewidth = 0.5) +
     ggplot2::geom_text(
-      ggplot2::aes(label = sprintf("%+.1f", anomaly_std)),
+      ggplot2::aes(label = sprintf("%+.1f", .data$anomaly_std)),
       size   = 2.8,
       colour = "grey15"
     ) +
@@ -577,7 +579,7 @@ plot_gfw_monthly_anomaly <- function(gfw_df,
       x       = NULL,
       y       = NULL,
       caption = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       )
     ) +
@@ -636,8 +638,7 @@ plot_gfw_temporal_composite <- function(gfw_df,
     lat_min, lat_max, lon_min, lon_max
   )
   p_anom <- plot_gfw_monthly_anomaly(
-    gfw_df, trend_start, trend_end,
-    lat_min, lat_max, lon_min, lon_max
+    gfw_df, lat_min, lat_max, lon_min, lon_max
   )
 
   (p_annual / p_anom) +
@@ -708,33 +709,33 @@ plot_gfw_gear_trend <- function(gfw_df,
       fishing_hours = dplyr::all_of("Apparent Fishing Hours")
     ) |>
     dplyr::filter(
-      lat > lat_min, lat < lat_max,
-      lon > lon_min, lon < lon_max
+      .data$lat > lat_min, .data$lat < lat_max,
+      .data$lon > lon_min, .data$lon < lon_max
     ) |>
     dplyr::rename(geartype = dplyr::any_of("geartype")) |>
-    dplyr::group_by(year, geartype) |>
-    dplyr::summarise(fishing_hours = sum(fishing_hours, na.rm = TRUE),
+    dplyr::group_by(.data$year, .data$geartype) |>
+    dplyr::summarise(fishing_hours = sum(.data$fishing_hours, na.rm = TRUE),
                      .groups = "drop")
 
   gear_plot <- gear_annual |>
     dplyr::mutate(
       gear_clean = dplyr::case_when(
-        geartype %in% keep_gears ~ geartype,
-        TRUE                     ~ "other"
+        .data$geartype %in% keep_gears ~ .data$geartype,
+        TRUE                           ~ "other"
       ),
-      gear_clean = stringr::str_replace_all(gear_clean, "_", " ") |>
+      gear_clean = stringr::str_replace_all(.data$gear_clean, "_", " ") |>
         stringr::str_to_title()
     ) |>
-    dplyr::group_by(year, gear_clean) |>
-    dplyr::summarise(fishing_hours = sum(fishing_hours, na.rm = TRUE),
+    dplyr::group_by(.data$year, .data$gear_clean) |>
+    dplyr::summarise(fishing_hours = sum(.data$fishing_hours, na.rm = TRUE),
                      .groups = "drop")
 
   # ── Plot ───────────────────────────────────────────────────────────────────
   ggplot2::ggplot(gear_plot,
                   ggplot2::aes(
-                    x    = factor(year),
-                    y    = fishing_hours / 1e3,
-                    fill = gear_clean
+                    x    = factor(.data$year),
+                    y    = .data$fishing_hours / 1e3,
+                    fill = .data$gear_clean
                   )) +
     ggplot2::geom_col(
       position  = "stack",
@@ -755,7 +756,7 @@ plot_gfw_gear_trend <- function(gfw_df,
       x       = NULL,
       y       = "Fishing hours (thousands)",
       caption = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       )
     ) +

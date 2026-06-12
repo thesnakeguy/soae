@@ -31,5 +31,5 @@ gfw_df <- download_gfw_data(years = c(2016:2025))
 
 }
 \seealso{
-\code{\link[=download_gfw_year]{download_gfw_year()}}, \code{\link[=download_trend_data]{download_trend_data()}}
+\code{\link[=download_gfw_year]{download_gfw_year()}}, \code{\link[=download_gfw_monthly]{download_gfw_monthly()}}
 }

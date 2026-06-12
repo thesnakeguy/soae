@@ -13,7 +13,7 @@ plot_gfw_monthly_anomaly(
 )
 }
 \arguments{
-\item{gfw_df}{Data frame. Raw output from \code{\link[=download_trend_data]{download_trend_data()}}.}
+\item{gfw_df}{Data frame. Raw output from \code{\link[=download_gfw_monthly]{download_gfw_monthly()}}.}
 
 \item{lat_min}{Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 Defaults to \code{-80}.}
