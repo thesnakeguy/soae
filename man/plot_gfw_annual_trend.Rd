@@ -45,7 +45,7 @@ the Antarctic Peninsula.
 \examples{
 \dontrun{
 gfw_df <- download_gfw_data(years = c(2016:2025))
-p <- plot_gfw_annual_trend(gfw_df, trend_start = 2016, trend_end = 2020)
+p <- plot_gfw_annual_trend(gfw_data = gfw_df, trend_start = 2016, trend_end = 2020)
 print(p)
 }
 

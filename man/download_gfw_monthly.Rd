@@ -26,7 +26,7 @@ automatically replaced if empty or corrupt.
 }
 \examples{
 \dontrun{
-gfw_monthly_df  <- download_gfw_monthly(2016, 2025)
+gfw_monthly_df  <- download_gfw_monthly(year_start = 2016, year_end = 2025)
 }
 
 }

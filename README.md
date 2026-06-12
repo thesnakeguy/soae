@@ -92,13 +92,19 @@ This will:
 
 ## 📦 Managing Dependencies
 
-If your code uses a new package, manually edit the `DESCRIPTION` file and add it under `Imports:`:
+If your code uses a new package (first check if it's not already listed), manually edit the `DESCRIPTION` file and add it under `Imports:`:
 
 ```
 Imports:
   ggplot2,
   dplyr,
   sf
+```
+
+You can then add it to the `soae-package.R` file as an `@importsFrom`. Eg:
+
+```
+#' @importFrom stats sd
 ```
 
 > Do not use helper functions to edit `DESCRIPTION`.

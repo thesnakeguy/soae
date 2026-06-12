@@ -43,7 +43,7 @@ Stacks the annual effort trend (panel A) and the monthly anomaly heatmap
 \examples{
 \dontrun{
 gfw_df <- download_gfw_data(years = c(2015:2025))
-p <- plot_gfw_temporal_composite(gfw_df, trend_start = 2016, trend_end = 2025)
+p <- plot_gfw_temporal_composite(gfw_df = gfw_df, trend_start = 2016, trend_end = 2025)
 print(p)
 ggplot2::ggsave("GFW_AnnualMonthly_trend.pdf", p, width = 12, height = 13)
 }

@@ -39,7 +39,7 @@ inside each tile. Coordinate bounderies default to the Antarctic Peninsula.
 \examples{
 \dontrun{
 gfw_monthly_df <- download_gfw_monthly(year_start = 2015, year_end = 2020)
-p <- plot_gfw_monthly_anomaly(gfw_monthly_df)
+p <- plot_gfw_monthly_anomaly(gfw_df = gfw_monthly_df)
 print(p)
 }
 

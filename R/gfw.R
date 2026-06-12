@@ -24,12 +24,9 @@
 #'
 #' @return A data frame returned by \code{gfw_ais_fishing_hours()}
 #'
-#' @importFrom gfwr gfw_ais_fishing_hours gfw_auth
-#' @importFrom glue glue
-#'
 #' @examples
 #' \dontrun{
-#' df_2023    <- download_gfw_year(2023)
+#' df_2023    <- download_gfw_year(year = 2023)
 #' }
 #'
 #' @export
@@ -78,11 +75,6 @@ download_gfw_year <- function(year,
 #'   \code{year} column.
 #'
 #' @seealso [download_gfw_year()], [download_gfw_monthly()]
-#'
-#' @importFrom purrr map map2 compact
-#' @importFrom dplyr bind_rows mutate
-#' @importFrom glue glue
-#' @importFrom gfwr gfw_auth
 #'
 #' @examples
 #' \dontrun{
@@ -152,14 +144,9 @@ download_gfw_data <- function(years,
 #'
 #' @seealso [download_gfw_year()], [download_gfw_data()]
 #'
-#' @importFrom purrr map map2 compact
-#' @importFrom dplyr bind_rows mutate
-#' @importFrom glue glue
-#' @importFrom gfwr gfw_auth
-#'
 #' @examples
 #' \dontrun{
-#' gfw_monthly_df  <- download_gfw_monthly(2016, 2025)
+#' gfw_monthly_df  <- download_gfw_monthly(year_start = 2016, year_end = 2025)
 #' }
 #'
 #' @export
@@ -211,7 +198,7 @@ download_gfw_monthly <- function(year_start,
 
 
 # =============================================================================
-# 2. PLOT FUNCTIONS
+# 2. PLOTTING FUNCTIONS
 # =============================================================================
 
 #' Plot annual fishing-effort heatmap panels for the Antarctic Peninsula
@@ -232,19 +219,10 @@ download_gfw_monthly <- function(year_start,
 #' @return A [patchwork::patchwork-package] object containing all annual panels plus a shared
 #'   title and caption. Print or pass to [ggplot2::ggsave()].
 #'
-#' @importFrom dplyr .data rename group_by summarise mutate filter all_of
-#' @importFrom ggplot2 ggplot geom_tile geom_sf aes coord_sf labs theme element_text element_blank guide_colorbar unit
-#' @importFrom scico scale_fill_scico
-#' @importFrom rnaturalearth ne_countries
-#' @importFrom sf st_crs
-#' @importFrom purrr map
-#' @importFrom patchwork wrap_plots plot_annotation
-#' @importFrom glue glue
-#'
 #' @examples
 #' \dontrun{
 #' gfw_df <- download_gfw_data(years = c(2016:2025))
-#' p <- plot_gfw_heatmap_panels(gfw_df, years = c(2016:2025))
+#' p <- plot_gfw_heatmap_panels(gfw_df = gfw_df, years = c(2016:2025))
 #' print(p)
 #' ggplot2::ggsave("GFW_plot.pdf", p, width = 12, height = 16)
 #' }
@@ -366,17 +344,10 @@ plot_gfw_heatmap_panels <- function(gfw_df,
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
-#' @importFrom dplyr rename filter group_by summarise mutate all_of
-#' @importFrom ggplot2 ggplot aes geom_smooth geom_line geom_point scale_x_continuous scale_y_continuous expansion labs
-#' @importFrom ggrepel geom_text_repel
-#' @importFrom scico scale_colour_scico
-#' @importFrom scales comma
-#' @importFrom glue glue
-#'
 #' @examples
 #' \dontrun{
 #' gfw_df <- download_gfw_data(years = c(2016:2025))
-#' p <- plot_gfw_annual_trend(gfw_df, trend_start = 2016, trend_end = 2020)
+#' p <- plot_gfw_annual_trend(gfw_data = gfw_df, trend_start = 2016, trend_end = 2020)
 #' print(p)
 #' }
 #'
@@ -477,18 +448,10 @@ plot_gfw_annual_trend <- function(gfw_df,
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
-#' @importFrom dplyr rename filter group_by summarise mutate left_join if_else all_of
-#' @importFrom stringr str_replace
-#' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_y_discrete labs theme element_blank element_text expansion guide_colorbar unit
-#' @importFrom scico scale_fill_scico
-#' @importFrom scales squish
-#' @importFrom stats sd
-#' @importFrom glue glue
-#'
 #' @examples
 #' \dontrun{
 #' gfw_monthly_df <- download_gfw_monthly(year_start = 2015, year_end = 2020)
-#' p <- plot_gfw_monthly_anomaly(gfw_monthly_df)
+#' p <- plot_gfw_monthly_anomaly(gfw_df = gfw_monthly_df)
 #' print(p)
 #' }
 #'
@@ -609,13 +572,10 @@ plot_gfw_monthly_anomaly <- function(gfw_df,
 #'
 #' @seealso [plot_gfw_annual_trend()], [plot_gfw_monthly_anomaly()]
 #'
-#' @importFrom patchwork plot_annotation
-#' @importFrom ggplot2 theme element_text
-#'
 #' @examples
 #' \dontrun{
 #' gfw_df <- download_gfw_data(years = c(2015:2025))
-#' p <- plot_gfw_temporal_composite(gfw_df, trend_start = 2016, trend_end = 2025)
+#' p <- plot_gfw_temporal_composite(gfw_df = gfw_df, trend_start = 2016, trend_end = 2025)
 #' print(p)
 #' ggplot2::ggsave("GFW_AnnualMonthly_trend.pdf", p, width = 12, height = 13)
 #' }
@@ -669,17 +629,10 @@ plot_gfw_temporal_composite <- function(gfw_df,
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
-#' @importFrom dplyr rename group_by summarise mutate case_when any_of all_of
-#' @importFrom stringr str_replace_all str_to_title
-#' @importFrom ggplot2 ggplot aes geom_col scale_y_continuous expansion labs theme element_text
-#' @importFrom scico scale_fill_scico_d
-#' @importFrom scales comma
-#' @importFrom glue glue
-#'
 #' @examples
 #' \dontrun{
 #' gfw_df <- download_gfw_data(years = c(2016:2025))
-#' p <- plot_gfw_gear_trend(gfw_df, years = c(2016:2025))
+#' p <- plot_gfw_gear_trend(gfw_df = gfw_df, years = c(2016:2025))
 #' print(p)
 #' ggplot2::ggsave("GFW_FisheriesGear.pdf", p, width = 12, height = 8)
 #' }

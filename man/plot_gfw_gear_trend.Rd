@@ -47,7 +47,7 @@ the Antarctic Peninsula.
 \examples{
 \dontrun{
 gfw_df <- download_gfw_data(years = c(2016:2025))
-p <- plot_gfw_gear_trend(gfw_df, years = c(2016:2025))
+p <- plot_gfw_gear_trend(gfw_df = gfw_df, years = c(2016:2025))
 print(p)
 ggplot2::ggsave("GFW_FisheriesGear.pdf", p, width = 12, height = 8)
 }
