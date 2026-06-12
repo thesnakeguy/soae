@@ -1,12 +1,10 @@
 Package: soae
 Title: State of the Antarctic Environment (soae) package
 Version: 0.1.0
-Authors@R: 
-    person(
-    "Pablo",
-    "Deschepper",
-    email = "pdeschepper@naturalsciences.be",
-    role = c("aut", "cre"))
+Authors@R: c(person("Pablo", "Deschepper",
+                    email = "pdeschepper@naturalsciences.be",
+                    role = c("aut", "cre")),
+             person("Ben", "Raymond", role = "aut"))
 Description: This package can be used to render the figures for
             the State of the Antarctic Environment (SOAE) report.
 Encoding: UTF-8
