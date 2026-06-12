@@ -99,7 +99,7 @@ download_gfw_data <- function(years,
   if (file.exists(cache_file)) {
     existing <- readRDS(cache_file)
     if (nrow(existing) == 0 || ncol(existing) == 0) {
-      message("Heatmap cache is empty or corrupt — deleting and re-fetching.")
+      message("Heatmap cache is empty or corrupt \u2014 deleting and re-fetching.")
       file.remove(cache_file)
     } else {
       message(glue::glue("Valid heatmap cache found ({nrow(existing)} rows). Loading."))
@@ -173,7 +173,7 @@ download_gfw_monthly <- function(year_start,
   if (file.exists(cache_file)) {
     existing_t <- readRDS(cache_file)
     if (nrow(existing_t) == 0 || ncol(existing_t) == 0) {
-      message("Month cache is empty or corrupt — deleting and re-fetching.")
+      message("Month cache is empty or corrupt \u2014 deleting and re-fetching.")
       file.remove(cache_file)
     } else {
       message(glue::glue("Valid month cache found ({nrow(existing_t)} rows). Loading."))
@@ -335,7 +335,7 @@ plot_gfw_heatmap_panels <- function(gfw_df,
         "{min(years)}\u2013{max(years)}"
       ),
       caption  = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       ),
       theme    = ggplot2::theme(
@@ -452,7 +452,7 @@ plot_gfw_annual_trend <- function(gfw_df,
       x       = NULL,
       y       = "Fishing hours (thousands)",
       caption = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       )
     ) +
@@ -576,7 +576,7 @@ plot_gfw_monthly_anomaly <- function(gfw_df,
       x       = NULL,
       y       = NULL,
       caption = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       )
     ) +
@@ -754,7 +754,7 @@ plot_gfw_gear_trend <- function(gfw_df,
       x       = NULL,
       y       = "Fishing hours (thousands)",
       caption = paste0(
-        "Data source: Global Fishing Watch (globalfishingwatch.org) — ",
+        "Data source: Global Fishing Watch (globalfishingwatch.org) \u2014 ",
         "AIS-based apparent fishing effort (public-global-fishing-effort:v3.0)"
       )
     ) +
