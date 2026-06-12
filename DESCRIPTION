@@ -12,6 +12,7 @@ Description: This package can be used to render the figures for
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
+Depends: R (>= 4.1.0)
 Imports:
     dplyr,
     gfwr,
