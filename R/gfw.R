@@ -102,9 +102,7 @@ download_gfw_data <- function(years,
 
   raw_list <- purrr::map(
     years,
-    ~ download_gfw_year(as.vector(.x),
-                        region_id = "CCAMLR",
-                        key       = gfwr::gfw_auth(),
+    ~ download_gfw_year(year = as.vector(.x),
                         group     = "GEARTYPE",
                         res       = "YEARLY")
   )
@@ -172,9 +170,7 @@ download_gfw_monthly <- function(year_start,
 
   raw_trend_list <- purrr::map(
     years,
-    ~ download_gfw_year(.x,
-                        region_id = "CCAMLR",
-                        key       = gfwr::gfw_auth(),
+    ~ download_gfw_year(year = .x,
                         group     = "FLAG",
                         res       = "MONTHLY")
   )
