@@ -17,6 +17,8 @@
 #' Then restart R. Obtain a free token at https://globalfishingwatch.org/our-apis/
 #'
 #' @param year       Integer. Calendar year to fetch (e.g. \code{2023}).
+#' @param region_id  Character. Region identifier.
+#' @param key        Character. Your GFW key. Defaults to the environment variable "GFW_TOKEN" as set by [gfwr::gfw_auth()].
 #' @param group      Character. Grouping variable passed to
 #'   \code{gfw_ais_fishing_hours()}. Defaults to \code{"GEARTYPE"}.
 #' @param res        Character. Temporal resolution: \code{"YEARLY"} or
