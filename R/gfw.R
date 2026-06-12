@@ -157,7 +157,7 @@ download_gfw_data <- function(years,
 #' @importFrom purrr map map2 compact
 #' @importFrom dplyr bind_rows mutate
 #' @importFrom glue glue
-#' @importFrom gfwr gfw_auth()
+#' @importFrom gfwr gfw_auth
 #'
 #' @examples
 #' \dontrun{
@@ -479,8 +479,7 @@ plot_gfw_annual_trend <- function(gfw_df,
 #'
 #' @return A [ggplot2::ggplot] object.
 #'
-#' @importFrom dplyr rename filter group_by summarise mutate left_join
-#'   if_else all_of
+#' @importFrom dplyr rename filter group_by summarise mutate left_join if_else all_of
 #' @importFrom stringr str_replace
 #' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_y_discrete labs theme element_blank element_text expansion guide_colorbar unit
 #' @importFrom scico scale_fill_scico
