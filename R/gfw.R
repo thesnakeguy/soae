@@ -638,8 +638,7 @@ plot_gfw_temporal_composite <- function(gfw_df,
     lat_min, lat_max, lon_min, lon_max
   )
   p_anom <- plot_gfw_monthly_anomaly(
-    gfw_df, trend_start, trend_end,
-    lat_min, lat_max, lon_min, lon_max
+    gfw_df, lat_min, lat_max, lon_min, lon_max
   )
 
   (p_annual / p_anom) +
