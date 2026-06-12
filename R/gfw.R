@@ -17,8 +17,6 @@
 #' Then restart R. Obtain a free token at https://globalfishingwatch.org/our-apis/
 #'
 #' @param year       Integer. Calendar year to fetch (e.g. \code{2023}).
-#' @param region_id  Character. Region identifier.
-#' @param key        Character. Your GFW key. Defaults to the environment variable "GFW_TOKEN" as set by [gfwr::gfw_auth()].
 #' @param group      Character. Grouping variable passed to
 #'   \code{gfw_ais_fishing_hours()}. Defaults to \code{"GEARTYPE"}.
 #' @param res        Character. Temporal resolution: \code{"YEARLY"} or
@@ -36,8 +34,6 @@
 #'
 #' @export
 download_gfw_year <- function(year,
-                              region_id = "CCAMLR",
-                              key = gfwr::gfw_auth(),
                               group       = "GEARTYPE",
                               res         = "YEARLY") {
 
@@ -50,9 +46,9 @@ download_gfw_year <- function(year,
       group_by            = group,
       start_date          = glue::glue("{year}-01-01"),
       end_date            = glue::glue("{year}-12-31"),
-      region              = region_id,
+      region              = "CCAMLR",
       region_source       = "RFMO",
-      key                 = key
+      key                 = gfwr::gfw_auth()
     ),
     error = function(e) {
       message(glue::glue("    Initial call error: {conditionMessage(e)}"))
