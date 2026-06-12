@@ -79,7 +79,7 @@ download_gfw_year <- function(year,
 #'   containing the raw columns returned by the GFW API plus an integer
 #'   \code{year} column.
 #'
-#' @seealso [download_gfw_year()], [download_trend_data()]
+#' @seealso [download_gfw_year()], [download_gfw_monthly()]
 #'
 #' @importFrom purrr map map2 compact
 #' @importFrom dplyr bind_rows mutate
@@ -152,7 +152,7 @@ download_gfw_data <- function(years,
 #' @return A data frame with one row per year × flag × month × grid cell,
 #'   containing raw GFW API columns plus an integer \code{year} column.
 #'
-#' @seealso [download_gfw_year()], [fetch_heatmap_data()]
+#' @seealso [download_gfw_year()], [download_gfw_data()]
 #'
 #' @importFrom purrr map map2 compact
 #' @importFrom dplyr bind_rows mutate
@@ -467,7 +467,7 @@ plot_gfw_annual_trend <- function(gfw_df,
 #' below-average months; red indicates above-average. Z-scores are printed
 #' inside each tile. Coordinate bounderies default to the Antarctic Peninsula.
 #'
-#' @param gfw_df    Data frame. Raw output from [download_trend_data()].
+#' @param gfw_df    Data frame. Raw output from [download_gfw_monthly()].
 #' @param lat_min      Numeric. Southern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
 #'   Defaults to \code{-80}.
 #' @param lat_max      Numeric. Northern latitude boundary for filtering. Defaults to the Antarctic Peninsula.
