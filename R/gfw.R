@@ -484,6 +484,7 @@ plot_gfw_annual_trend <- function(gfw_df,
 #' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_y_discrete labs theme element_blank element_text expansion guide_colorbar unit
 #' @importFrom scico scale_fill_scico
 #' @importFrom scales squish
+#' @importFrom stats sd
 #' @importFrom glue glue
 #'
 #' @examples
