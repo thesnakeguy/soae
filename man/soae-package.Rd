@@ -13,6 +13,7 @@ This package can be used to render the figures for the State of the Antarctic En
 
 Authors:
 \itemize{
+  \item Pablo Deschepper \email{pdeschepper@naturalsciences.be}
   \item Ben Raymond
   \item Mike Meredyth-Young
 }
