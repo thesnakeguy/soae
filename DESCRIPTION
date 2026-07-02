@@ -29,11 +29,24 @@ Imports:
     purrr,
     scales,
     scico,
-    gfwr
+    gfwr,
+    blueant,
+    worrms,
+    igraph,
+    vegan,
+    backbone,
+    randomcoloR,
+    SOmap,
+    raster,
+    cowplot,
+    bowerbird
 Suggests:
     rnaturalearthdata
 Remotes:
     thomasp85/scico,
-    GlobalFishingWatch/gfwr
+    GlobalFishingWatch/gfwr,
+    AustralianAntarcticDivision/blueant,
+    AustralianAntarcticDivision/SOmap,
+    ropensci/bowerbird
 License: MIT + file LICENSE
 Config/roxygen2/version: 8.0.0
